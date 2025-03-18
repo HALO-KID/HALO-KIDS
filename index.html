@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>童裝樂園 - 讓孩子穿出快樂與自信</title>
+    
+    <!-- CDN 引入 -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- 自定義樣式 -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        :root {
+            --primary-color: #7eb8ff;
+            --secondary-color: #ff9ecd;
+            --accent-color: #ffe566;
+            /* 其他顏色保持不變 */
+        }
+
+        /* 添加一些額外的樣式 */
+        .hero-slider .swiper-slide {
+            position: relative;
+            height: 600px;
+        }
+
+        .hero-slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #6aa3ff;
+        }
+
+        /* Logo 大小調整 */
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- App容器 -->
+    <div id="app">
+        <!-- 頂部導航 -->
+        <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <a href="#" data-page="home">
+                        <img src="https://via.placeholder.com/1920x800" alt="新季童裝">
+                    </a>
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#" data-page="home" class="active">首頁</a></li>
+                        <li><a href="#" data-page="categories">商品分類</a></li>
+                        <li><a href="#" data-page="about">關於我們</a></li>
+                        <li><a href="#" data-page="promotions">最新活動</a></li>
+                        <li><a href="#" data-page="testimonials">客戶評價</a></li>
+                        <li><a href="#" data-page="contact">聯繫我們</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="user-actions">
+                    <a href="#" class="cart-icon" data-page="cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <a href="#" class="login-btn" data-page="login">登入/註冊</a>
+                </div>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主要內容區域 -->
+        <main id="main-content">
+            <!-- 頁面內容將通過 JavaScript 動態加載 -->
+        </main>
+
+        <!-- 頁尾 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>快速連結</h3>
+                        <ul>
+                            <li><a href="#" data-page="policy">退換貨政策</a></li>
+                            <li><a href="#" data-page="privacy">隱私政策</a></li>
+                            <li><a href="#" data-page="faq">常見問題</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>關注我們</h3>
+                        <div class="social-links">
+                            <a href="https://facebook.com/kidsfashion" target="_blank"><i class="fab fa-facebook"></i></a>
+                            <a href="https://instagram.com/kidsfashion" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a href="https://line.me/kidsfashion" target="_blank"><i class="fab fa-line"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h3>訂閱最新資訊</h3>
+                        <form class="subscribe-form">
+                            <input type="email" placeholder="請輸入您的電子郵件">
+                            <button type="submit">訂閱</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 模板容器 -->
+    <div id="templates" style="display: none;">
+        <!-- 各頁面模板將在這裡定義 -->
+    </div>
+
+    <!-- JavaScript CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- 自定義腳本 -->
+    <script>
+        // 將 router.js 的內容直接放這裡
+        class Router {
+            constructor() {
+                this.routes = new Map();
+                this.currentPage = null;
+                
+                window.addEventListener('hashchange', this.handleRoute.bind(this));
+                window.addEventListener('load', this.handleRoute.bind(this));
+            }
+
+            addRoute(path, component) {
+                this.routes.set(path, component);
+            }
+
+            async handleRoute() {
+                const hash = window.location.hash || '#home';
+                const path = hash.slice(1);
+                
+                this.updateNavigation(path);
+                
+                const component = this.routes.get(path) || this.routes.get('404');
+                
+                if (component) {
+                    this.currentPage = path;
+                    const mainContent = document.getElementById('main-content');
+                    mainContent.innerHTML = await component.render();
+                    
+                    if (component.init) {
+                        component.init();
+                    }
+                }
+            }
+
+            updateNavigation(path) {
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                const activeLink = document.querySelector(`[data-page="${path}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+
+            navigateTo(path) {
+                window.location.hash = path;
+            }
+        }
+
+        // 將 BasePage.js 的內容放這裡
+        class BasePage {
+            constructor(title) {
+                this.title = title;
+            }
+
+            async render() {
+                throw new Error('Component must implement render method');
+            }
+
+            init() {}
+            destroy() {}
+        }
+
+        // 將 HomePage.js 的內容放這裡
+        class HomePage extends BasePage {
+            constructor() {
+                super('首頁');
+            }
+
+            async render() {
+                return `
+                    <div class="home-page">
+                        <!-- 主視覺輪播區 -->
+                        <section class="hero">
+                            <div class="swiper hero-slider">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <img src="https://via.placeholder.com/1920x800" alt="新季童裝">
+                                        <div class="slide-content">
+                                            <h1>讓孩子穿出快樂與自信</h1>
+                                            <a href="#shop" class="cta-button">立即選購</a>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="https://via.placeholder.com/1920x800" alt="夏季新品">
+                                        <div class="slide-content">
+                                            <h1>夏季新品上市</h1>
+                                            <a href="#shop" class="cta-button">查看詳情</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-pagination"></div>
+                                <div class="swiper-button-next"></div>
+                                <div class="swiper-button-prev"></div>
+                            </div>
+                        </section>
+
+                        <!-- 其他內容... -->
+                    </div>
+                `;
+            }
+
+            init() {
+                new Swiper('.hero-slider', {
+                    loop: true,
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                });
+            }
+        }
+
+        // 初始化應用
+        class App {
+            constructor() {
+                this.router = new Router();
+                this.initializeRoutes();
+                this.initializeEventListeners();
+            }
+
+            initializeRoutes() {
+                this.router.addRoute('home', new HomePage());
+            }
+
+            initializeEventListeners() {
+                const menuBtn = document.querySelector('.mobile-menu-btn');
+                const mainNav = document.querySelector('.main-nav');
+                
+                menuBtn.addEventListener('click', () => {
+                    mainNav.classList.toggle('show');
+                });
+
+                const subscribeForm = document.querySelector('.subscribe-form');
+                subscribeForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = e.target.querySelector('input[type="email"]').value;
+                    alert('感謝訂閱！');
+                });
+            }
+        }
+
+        // 啟動應用
+        window.addEventListener('DOMContentLoaded', () => {
+            window.app = new App();
+        });
+    </script>
+</body>
+</html> 
